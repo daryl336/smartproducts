@@ -9,7 +9,6 @@ from langchain.memory import ConversationBufferMemory
 from langchain.document_loaders import UnstructuredFileLoader, PyPDFLoader
 from unstructured.cleaners.core import clean_extra_whitespace
 import streamlit as st 
-import whisper
 
 GOOGLE_API_KEY = st.secrets["GOOGLE_API_KEY"]
 os.environ['GOOGLE_API_KEY']=GOOGLE_API_KEY
