@@ -6,4 +6,4 @@ streamlit==1.29.0
 unstructured[all-docs]==0.11.8
 langchain-google-genai==0.0.5
 opencv-python-headless
-sqlite3 >= 3.35.0
+pysqlite3-binary
