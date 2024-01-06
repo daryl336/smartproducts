@@ -5,4 +5,4 @@ google-ai-generativelanguage==0.4.0
 streamlit==1.29.0
 unstructured[all-docs]==0.11.8
 langchain-google-genai==0.0.5
-
+opencv-python-headless
