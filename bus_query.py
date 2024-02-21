@@ -96,6 +96,7 @@ def extract_numbers(text):
     return re.findall(r'\d+', text)
 
 def bus_chatbot():
+    llm = GenerativeModel("gemini-1.0-pro")
     ## Initialise conversation and other variables
     if 'chat' not in st.session_state:
         st.session_state.chat = llm.start_chat(history = [])
@@ -115,8 +116,6 @@ def bus_chatbot():
         vector_store = preprocessing()
         st.session_state.vs = vector_store
         st.session_state.vs_loaded = True
-
-    llm = GenerativeModel("gemini-1.0-pro")
     
     # Query through LLM    
     question = st.chat_input(placeholder="You can ask me basic information about public bus services such as route list, first and last bus timing etc.")   
