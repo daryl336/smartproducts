@@ -13,6 +13,7 @@ from langchain.memory import ConversationBufferMemory
 from langchain.document_loaders import UnstructuredFileLoader, PyPDFLoader
 from unstructured.cleaners.core import clean_extra_whitespace
 import streamlit as st 
+from bus_query import *
 
 GOOGLE_API_KEY = st.secrets["GOOGLE_API_KEY"]
 os.environ['GOOGLE_API_KEY']=GOOGLE_API_KEY
@@ -148,13 +149,13 @@ def doc_chatbot():
         display_conversation(st.session_state.conversation_history)
     
 def main():
-    st.set_page_config(page_title="Google API functions!", layout="wide")    
-    functions = ["Document Chatbot", ]
+    st.set_page_config(page_title="Smart AI Products Use Cases!", layout="wide")    
+    functions = ["Document Chatbot", "Public Bus Services Query"]
     page = st.sidebar.selectbox("Choose a function", functions)
     if page == functions[0]:
         doc_chatbot()
-    #elif page == functions[1]:
-    #    transcription()
+    elif page == functions[1]:
+        bus_chatbot()
 
 if __name__ == "__main__":
     main()
