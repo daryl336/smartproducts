@@ -98,8 +98,8 @@ def extract_numbers(text):
 def bus_chatbot():
     llm = GenerativeModel("gemini-1.0-pro")
     ## Initialise conversation and other variables
-    if 'chat' not in st.session_state:
-        st.session_state.chat = llm.start_chat()
+    if 'model' not in st.session_state:
+        st.session_state.model = llm
 
     if 'conversation_history' not in st.session_state:
         st.session_state.conversation_history = []
@@ -123,7 +123,8 @@ def bus_chatbot():
     if question:
         with st.spinner("Loading Response from Model ..."):
             # Get the bus services in the prompt first.
-            bus_service = st.session_state.chat.send_message("Get the bus services number or bus number mentioned in the question, splitting by comma if there are many bus services: {}.".format(question)).text
+            #bus_service = st.session_state.chat.send_message("Get the bus services number or bus number mentioned in the question, splitting by comma if there are many bus services: {}.".format(question)).text
+            bus_service = st.session_state.model.generate_content("Get the bus services number or bus number mentioned in the question, splitting by comma if there are many bus services: {}.".format(question)).text
             bus_service_list = extract_numbers(bus_service)
             print(bus_service_list)
             full_context = ''
@@ -136,7 +137,7 @@ def bus_chatbot():
             Before you give an answer, make sure it is only from information in the context.
             Answer: """
             
-            result = st.session_state.chat.send_message(final_prompt)
+            result = st.session_state.model.generate_content(final_prompt)
             
             temp_convo = [question.strip(),result.text.strip()]
             st.session_state.conversation_history.append(temp_convo)
