@@ -52,7 +52,8 @@ def get_context(question, vector_store, num_docs, embedding_col):
 def preprocessing():
     df = pd.read_excel('Bus Services Info.xlsx')
     # This may take several minutes to complete.
-    df["bus_service_embedding"] = df["bus_service"].apply(lambda x: get_embedding(x))
+    with st.spinner("Generating embeddings..."):
+        df["bus_service_embedding"] = df["bus_service"].apply(lambda x: get_embedding(x))
     return df
 
 def display_conversation(messages):
