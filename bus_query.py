@@ -123,8 +123,9 @@ def bus_chatbot():
     if question:
         with st.spinner("Loading Response from Model ..."):
             # Get the bus services in the prompt first.
-            bus_service = st.session_state.chat.send_message("Get the bus services number mentioned in the question, splitting by comma if there are many bus services: {}.".format(question)).text
+            bus_service = st.session_state.chat.send_message("Get the bus services number or bus number mentioned in the question, splitting by comma if there are many bus services: {}.".format(question)).text
             bus_service_list = extract_numbers(bus_service)
+            print(bus_service_list)
             full_context = ''
             for bus in bus_service_list:
                 context = get_context(bus, st.session_state.vs, 5, "bus_service_embedding")
