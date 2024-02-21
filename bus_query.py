@@ -99,7 +99,7 @@ def bus_chatbot():
     llm = GenerativeModel("gemini-1.0-pro")
     ## Initialise conversation and other variables
     if 'chat' not in st.session_state:
-        st.session_state.chat = llm.start_chat(history = [])
+        st.session_state.chat = llm.start_chat()
 
     if 'conversation_history' not in st.session_state:
         st.session_state.conversation_history = []
