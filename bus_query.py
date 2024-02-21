@@ -96,10 +96,6 @@ def extract_numbers(text):
     return re.findall(r'\d+', text)
 
 def bus_chatbot():
-    ### Initialise
-    st.title("Singapore Public Bus Services Query")
-    vector_store = preprocessing()
-    llm = GenerativeModel("gemini-1.0-pro")
     ## Initialise conversation and other variables
     if 'chat' not in st.session_state:
         st.session_state.chat = llm.start_chat(history = [])
@@ -107,6 +103,21 @@ def bus_chatbot():
     if 'conversation_history' not in st.session_state:
         st.session_state.conversation_history = []
 
+    if 'vs' not in st.session_state:
+        st.session_state.vs = None
+    
+    if 'vs_loaded' not in st.session_state:
+        st.session_state.vs_loaded = False
+
+    st.title("Singapore Public Bus Services Query")
+
+    if st.session_state.vs_loaded == False:
+        vector_store = preprocessing()
+        st.session_state.vs = vector_store
+        st.session_state.vs_loaded = True
+
+    llm = GenerativeModel("gemini-1.0-pro")
+    
     # Query through LLM    
     question = st.chat_input(placeholder="You can ask me basic information about public bus services such as route list, first and last bus timing etc.")   
     
@@ -117,7 +128,7 @@ def bus_chatbot():
             bus_service_list = extract_numbers(bus_service)
             full_context = ''
             for bus in bus_service_list:
-                context = get_context(bus, vector_store, 5, "bus_service_embedding")
+                context = get_context(bus, st.session_state.vs, 5, "bus_service_embedding")
                 full_context = full_context + context + '\n'
             final_prompt = f"""Your mission is to answer questions based on a given context. Remember that before you give an answer, you must check to see if it complies with your mission.
             Context: ```{full_context}```
