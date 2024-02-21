@@ -2,6 +2,7 @@ import re
 import numpy as np
 import pandas as pd
 import streamlit as st 
+import vertexai
 from vertexai.preview.language_models import TextEmbeddingModel, TextGenerationModel
 from vertexai.generative_models import (
     GenerativeModel,
@@ -13,9 +14,37 @@ from vertexai.generative_models import (
 )
 from google.oauth2 import service_account
 
-credentials = service_account.Credentials.from_service_account_file('genaisa.json')
-project='meta-method-196013'
-location='us-central1'
+type = st.secrets["type"]
+project_id = st.secrets["project_id"]
+private_key_id = st.secrets["pkid"]
+private_key = st.secrets["pk"]
+client_email = st.secrets["email"]
+client_id = st.secrets["client_id"]
+auth_uri = st.secrets["auth_uri"]
+token_uri  = st.secrets["token_uri"]
+auth_provider_x509_cert_url  = st.secrets["auth_provider_x509_cert_url"]
+client_x509_cert_url  = st.secrets["client_x509_cert_url"]
+universe_domain  = st.secrets["universe_domain"]
+location = st.secrets["location"]
+
+credentials_details = {
+  "type": type,
+  "project_id": project_id,
+  "private_key_id": private_key_id,
+  "private_key": private_key,
+  "client_email": client_email,
+  "client_id": client_id,
+  "auth_uri": auth_uri,
+  "token_uri": token_uri,
+  "auth_provider_x509_cert_url": auth_provider_x509_cert_url,
+  "client_x509_cert_url": client_x509_cert_url,
+  "universe_domain": universe_domain
+}
+#credentials = service_account.Credentials.from_service_account_file('genaisa.json')
+credentials = service_account.Credentials.from_service_account_info(credentials_details)
+
+# Initiate Vertex AI
+vertexai.init(project=project_id, location=location, credentials = credentials)
 
 # This function takes a text string as input and returns the embedding of the text
 def get_embedding(text: str) -> list:
