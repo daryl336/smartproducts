@@ -14,6 +14,7 @@ from vertexai.generative_models import (
     GenerationResponse,
 )
 from google.oauth2 import service_account
+from bus_helper import *
 
 type = st.secrets["type"]
 project_id = st.secrets["project_id"]
@@ -27,6 +28,9 @@ auth_provider_x509_cert_url  = st.secrets["auth_provider_x509_cert_url"]
 client_x509_cert_url  = st.secrets["client_x509_cert_url"]
 universe_domain  = st.secrets["universe_domain"]
 location = st.secrets["location"]
+LTA_API_KEY = st.secrets["LTA_API_KEY"]
+
+bus_stop_df = pd.read_excel('bus_stop_details.xlsx')
 
 credentials_details = {
   "type": type,
@@ -96,9 +100,9 @@ def preprocessing():
 def display_conversation(messages):
     for convo in messages:
         with st.chat_message("user"):
-            st.write(convo[0])
+            st.markdown(convo[0])
         with st.chat_message("assistant"):
-            st.write(convo[1])
+            st.markdown(convo[1])
                
 def extract_numbers(text):
     return re.findall(r'\d+', text)
@@ -126,28 +130,60 @@ def bus_chatbot():
         st.session_state.vs_loaded = True
     
     # Query through LLM    
-    question = st.chat_input(placeholder="You can ask me basic information about public bus services such as route list, first and last bus timing etc.")   
+    question = st.chat_input(placeholder="You can ask me basic information about public bus services such as route list, first and last bus timing etc. You can also ask for bus timing for a particular bus stop.")   
     
     if question:
         with st.spinner("Loading Response from Model ..."):
-            # Get the bus services in the prompt first.
-            #bus_service = st.session_state.chat.send_message("Get the bus services number or bus number mentioned in the question, splitting by comma if there are many bus services: {}.".format(question)).text
-            bus_service = st.session_state.model.generate_content("Get the bus services number or bus number mentioned in the question, splitting by comma if there are many bus services: {}.".format(question)).text
-            bus_service_list = extract_numbers(bus_service)
-            print(bus_service_list)
-            full_context = ''
-            for bus in bus_service_list:
-                context = get_context(bus, st.session_state.vs, 5, "bus_service_embedding")
-                full_context = full_context + context + '\n'
-            final_prompt = f"""Your mission is to answer questions based on a given context. Remember that before you give an answer, you must check to see if it complies with your mission.
-            Context: ```{full_context}```
-            Question: ***{question}***
-            Before you give an answer, make sure it is only from information in the context.
-            Answer: """
+            pattern = r'\d{5}'
+            matches = re.findall(pattern, question)
+
+            if len(matches) > 0:
+                type = 'Arrival Timing'
+            else:
+                type = st.session_state.model.generate_content(
+                    """Classify the prompt into these 2 types. Reply just either one of the type will do. 
+                    1 - Service Information
+                    2 - Arrival Timing
+
+                    Examples
+                    Prompt: What is the first and last bus?
+                    Answer: Service Information
+
+                    Prompt: What is the bus arrival timing at bus stop 54321?
+                    Answer: Arrival Timing
+
+                    Prompt: What is the direction of travel of bus 22?
+                    Answer: Service Information
+                    
+                    Prompt: bus arrival timing at 46001?
+                    Answer: Arrival Timing
+
+                    Prompt: {question}."""
+                    ).text.strip()
             
-            result = st.session_state.model.generate_content(final_prompt)
-            
-            temp_convo = [question.strip(),result.text.strip()]
+            if type == "Service Information":
+                bus_service = st.session_state.model.generate_content("Get the bus services number or bus number mentioned in the question, splitting by comma if there are many bus services: {}.".format(question)).text
+                bus_service_list = extract_numbers(bus_service)
+                full_context = ''
+                for bus in bus_service_list:
+                    context = get_context(bus, st.session_state.vs, 5, "bus_service_embedding")
+                    full_context = full_context + context + '\n'
+                final_prompt = f"""Your mission is to answer questions based on a given context. Remember that before you give an answer, you must check to see if it complies with your mission.
+                Context: ```{full_context}```
+                Question: ***{question}***
+                Before you give an answer, make sure it is only from information in the context.
+                Answer: """
+                result = st.session_state.model.generate_content(final_prompt)
+                temp_convo = [question.strip(),result.text.strip()]
+            elif type == "Arrival Timing":
+                try:
+                    pattern = r'\d{5}'
+                    bus_stop_code = re.findall(pattern, question)[0]
+                    bus_service = extract_numbers(question)[0]
+                    msg = get_specific_bus_stop_specific_bus(bus_stop_df, LTA_API_KEY, bus_stop_code, bus_service)
+                except Exception as e:
+                    msg = "Error with message, please specify only 1 bus and 1 bus stop code!"
+                temp_convo = [question.strip(),msg.strip()]
             st.session_state.conversation_history.append(temp_convo)
 
         display_conversation(st.session_state.conversation_history)
