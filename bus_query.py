@@ -126,7 +126,7 @@ def bus_chatbot():
 
     st.markdown(
         "A Chatbot with functionalities to get live bus timing from specified bus stop for a specified bus, and getting bus service information such as first and last bus timing, directions of travel and route list.\n\n"
-        "Some Sample below to help you out: \n"
+        "Some Sample below to help you out: \n\n"
         
         "Getting Live Bus Timing (Need to specify 1 Bus Stop Code and 1 Bus Service Number) - What is the arrival timing for bus 913 at 46009\n"
 
