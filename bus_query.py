@@ -124,7 +124,7 @@ def bus_chatbot():
 
     st.title("Singapore Public Bus Services Query")
 
-    st.markdown(
+    st.caption(
         "A Chatbot with functionalities to get live bus timing from specified bus stop for a specified bus, and getting bus service information such as first and last bus timing, directions of travel and route list.\n\n"
         "Some Sample below to help you out: \n\n"
         
