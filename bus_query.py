@@ -1,4 +1,5 @@
 import re
+import json
 import numpy as np
 import pandas as pd
 import streamlit as st 
@@ -79,10 +80,16 @@ def get_context(question, vector_store, num_docs, embedding_col):
     return context
 
 def preprocessing():
-    df = pd.read_excel('Bus Services Info.xlsx')
-    # This may take several minutes to complete.
-    with st.spinner("Generating embeddings..."):
-        df["bus_service_embedding"] = df["bus_service"].apply(lambda x: get_embedding(x))
+    # Reading JSON file
+    with open('bus_service_embeddings.json', 'r') as json_file:
+        data = json.load(json_file)
+
+    unpack = []
+    for key in list(data.keys()):
+        unpack.append([key, data[key][1],data[key][0]])
+
+    df = pd.DataFrame(unpack)
+    df.columns = ['bus_service','bus_service_info','bus_service_embedding']
     return df
 
 def display_conversation(messages):
