@@ -81,15 +81,16 @@ def get_context(question, vector_store, num_docs, embedding_col):
 
 def preprocessing():
     # Reading JSON file
-    with open('bus_service_embeddings.json', 'r') as json_file:
-        data = json.load(json_file)
+    with st.spinner("Loading Embeddings ..."):
+        with open('bus_service_embeddings.json', 'r') as json_file:
+            data = json.load(json_file)
 
-    unpack = []
-    for key in list(data.keys()):
-        unpack.append([key, data[key][1],data[key][0]])
+        unpack = []
+        for key in list(data.keys()):
+            unpack.append([key, data[key][1],data[key][0]])
 
-    df = pd.DataFrame(unpack)
-    df.columns = ['bus_service','bus_service_info','bus_service_embedding']
+        df = pd.DataFrame(unpack)
+        df.columns = ['bus_service','bus_service_info','bus_service_embedding']
     return df
 
 def display_conversation(messages):
