@@ -130,7 +130,7 @@ def bus_chatbot():
         
         "1) Getting Live Bus Timing (Need to specify 1 Bus Stop Code and 1 Bus Service Number) - What is the arrival timing for bus 913 at 46009\n\n"
 
-        "2) Service Information (Need to specify Bus Service Number) - What is the direction of travel of bus 22?"
+        "2) Service Information (Need to specify Bus Service Number) - Get direction of travel for bus 22?"
     )
 
     if st.session_state.vs_loaded == False:
@@ -155,16 +155,16 @@ def bus_chatbot():
                     2 - Arrival Timing
 
                     Examples
-                    Prompt: What is the first and last bus?
+                    Prompt: What is the first and last bus for bus 72?
                     Answer: Service Information
 
-                    Prompt: What is the bus arrival timing at bus stop 54321?
+                    Prompt: What is the bus arrival timing for bus 80 at bus stop 54321?
                     Answer: Arrival Timing
 
-                    Prompt: What is the direction of travel of bus 22?
+                    Prompt: Get direction of travel for bus 22.
                     Answer: Service Information
                     
-                    Prompt: bus arrival timing at 46001?
+                    Prompt: bus 913 arrival timing at 46001?
                     Answer: Arrival Timing
 
                     Prompt: {question}."""
