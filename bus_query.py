@@ -125,12 +125,12 @@ def bus_chatbot():
     st.title("Singapore Public Bus Services Query")
 
     st.markdown(
-        "A Chatbot with functionalities to get live bus timing from specified bus stop for a specified bus, and getting bus service information such as first and last bus timing, directions of travel and route list."
-        "Some Sample below to help you out: "
+        "A Chatbot with functionalities to get live bus timing from specified bus stop for a specified bus, and getting bus service information such as first and last bus timing, directions of travel and route list.\n\n"
+        "Some Sample below to help you out: \n"
         
-        "Getting Live Bus Timing (Specify Bus Stop Code and a Bus Service Number) - What is the arrival timing for bus 913 at 46009"
+        "Getting Live Bus Timing (Need to specify 1 Bus Stop Code and 1 Bus Service Number) - What is the arrival timing for bus 913 at 46009\n"
 
-        "Service Information - What is the direction of travel of bus 22?"
+        "Service Information (Need to specify Bus Service Number) - What is the direction of travel of bus 22?"
     )
 
     if st.session_state.vs_loaded == False:
