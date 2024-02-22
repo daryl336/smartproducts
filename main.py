@@ -150,12 +150,12 @@ def doc_chatbot():
     
 def main():
     st.set_page_config(page_title="Smart AI Products Use Cases!", layout="wide")    
-    functions = ["Document Chatbot", "Public Bus Services Query"]
+    functions = ["Public Bus Services Query","Document Chatbot"]
     page = st.sidebar.selectbox("Choose a function", functions)
     if page == functions[0]:
-        doc_chatbot()
-    elif page == functions[1]:
         bus_chatbot()
+    elif page == functions[1]:
+        doc_chatbot()
 
 if __name__ == "__main__":
     main()

@@ -103,9 +103,9 @@ def display_conversation(messages):
             st.markdown(convo[0])
         with st.chat_message("assistant"):
             st.markdown(convo[1])
-               
+             
 def extract_numbers(text):
-    return re.findall(r'\d+', text)
+    return re.findall(r'\b\d{1,3}[a-zA-Z]?\b', text)
 
 def bus_chatbot():
     llm = GenerativeModel("gemini-1.0-pro")
@@ -123,6 +123,15 @@ def bus_chatbot():
         st.session_state.vs_loaded = False
 
     st.title("Singapore Public Bus Services Query")
+
+    st.markdown(
+        "A Chatbot with functionalities to get live bus timing from specified bus stop for a specified bus, and getting bus service information such as first and last bus timing, directions of travel and route list."
+        "Some Sample below to help you out: "
+        
+        "Getting Live Bus Timing (Specify Bus Stop Code and a Bus Service Number) - What is the arrival timing for bus 913 at 46009"
+
+        "Service Information - What is the direction of travel of bus 22?"
+    )
 
     if st.session_state.vs_loaded == False:
         vector_store = preprocessing()
