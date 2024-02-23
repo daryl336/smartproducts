@@ -150,7 +150,7 @@ def bus_chatbot():
                 type = 'Arrival Timing'
             else:
                 type = st.session_state.model.generate_content(
-                    """Classify the prompt into these 2 types. Reply just either one of the type will do. 
+                    f"""Classify the prompt into these 2 types. If there is a 5 digit string then it will be classified as Arrival Timing, else it is likely to be under Service Information. Reply just either one of the type will do. 
                     1 - Service Information
                     2 - Arrival Timing
 
@@ -158,7 +158,7 @@ def bus_chatbot():
                     Prompt: What is the first and last bus for bus 72?
                     Answer: Service Information
 
-                    Prompt: Route List bus 2.
+                    Prompt: Get route list for bus 2.
                     Answer: Service Information
 
                     Prompt: Get direction of travel for bus 22.
@@ -170,7 +170,7 @@ def bus_chatbot():
                     Prompt: bus 913 arrival timing at 46001?
                     Answer: Arrival Timing
 
-                    Prompt: when is bus 9 arriving at 34561?
+                    Prompt: when is bus 123 arriving at 34561?
                     Answer: Arrival Timing
 
                     Prompt: {question}."""
@@ -197,7 +197,7 @@ def bus_chatbot():
                     bus_service = extract_numbers(question)[0]
                     msg = get_specific_bus_stop_specific_bus(bus_stop_df, LTA_API_KEY, bus_stop_code, bus_service)
                 except Exception as e:
-                    msg = "Error with message, please specify only 1 bus and 1 bus stop code!"
+                    msg = "Error with message, please specify 1 bus and 1 bus stop code!"
                 temp_convo = [question.strip(),msg.strip()]
             st.session_state.conversation_history.append(temp_convo)
 
