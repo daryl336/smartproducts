@@ -4,7 +4,6 @@ import geopy.distance
 import pandas as pd
 import geopandas as gpd
 from datetime import datetime, timedelta, timezone
-from variables import *
 import vertexai
 from vertexai.preview.language_models import TextEmbeddingModel, TextGenerationModel
 from google.oauth2 import service_account
@@ -22,6 +21,7 @@ auth_provider_x509_cert_url  = st.secrets["auth_provider_x509_cert_url"]
 client_x509_cert_url  = st.secrets["client_x509_cert_url"]
 universe_domain  = st.secrets["universe_domain"]
 location = st.secrets["location"]
+LTA_API_KEY = st.secrets["LTA_API_KEY"]
 
 credentials_details = {
   "type": type,
@@ -43,9 +43,6 @@ location = st.secrets["location"]
 
 url = "http://datamall2.mytransport.sg/ltaodataservice/BusRoutes"
 headers = {'AccountKey': LTA_API_KEY}
-response = requests.get(url, headers=headers)
-data = response.json()
-data
 
 result = []
 for i in range(100):
@@ -131,22 +128,22 @@ for bus in list(bus_info.keys()):
     if len(direction) == 2:
         direction_info = 'Direction of Travel: Bus Service {} has {} directions. The first direction is towards {} while the second direction is towards {}.'.format(bus, str(len(direction)), bus_info[bus]['full route 1'][-1], bus_info[bus]['full route 2'][-1])
         first_last_bus_info = 'Bus Timing Information: The timings are as follows:'
-        dir1_info = 'Towards {}\n'.format(bus_info[bus]['full route 1'][-1]) + 'Weekday First Bus : {}, Weekday Last Bus : {}'.format(bus_info[bus]['Timing 1']['WD_FirstBus'],bus_info[bus]['Timing 1']['WD_LastBus']) + ',Saturday First Bus : {}, Saturday Last Bus : {}'.format(bus_info[bus]['Timing 1']['SAT_FirstBus'],bus_info[bus]['Timing 1']['SAT_LastBus']) + ',Sunday First Bus : {}, Sunday Last Bus : {}'.format(bus_info[bus]['Timing 1']['SUN_FirstBus'],bus_info[bus]['Timing 1']['SUN_LastBus'])
-        dir2_info = 'Towards {}\n'.format(bus_info[bus]['full route 2'][-1]) + 'Weekday First Bus : {}, Weekday Last Bus : {}'.format(bus_info[bus]['Timing 2']['WD_FirstBus'],bus_info[bus]['Timing 2']['WD_LastBus']) + ',Saturday First Bus : {}, Saturday Last Bus : {}'.format(bus_info[bus]['Timing 2']['SAT_FirstBus'],bus_info[bus]['Timing 2']['SAT_LastBus']) + ',Sunday First Bus : {}, Sunday Last Bus : {}'.format(bus_info[bus]['Timing 2']['SUN_FirstBus'],bus_info[bus]['Timing 2']['SUN_LastBus'])
-        first_last_bus_info = first_last_bus_info + '\n' + dir1_info + '\n' + dir2_info
-        full_route_1 = 'Towards {}\nRoute List:'.format(bus_info[bus]['full route 1'][-1])
+        dir1_info = 'Towards {}  \n'.format(bus_info[bus]['full route 1'][-1]) + 'Weekday First Bus : {}, Weekday Last Bus : {}'.format(bus_info[bus]['Timing 1']['WD_FirstBus'],bus_info[bus]['Timing 1']['WD_LastBus']) + ', Saturday First Bus : {}, Saturday Last Bus : {}'.format(bus_info[bus]['Timing 1']['SAT_FirstBus'],bus_info[bus]['Timing 1']['SAT_LastBus']) + ', Sunday First Bus : {}, Sunday Last Bus : {}'.format(bus_info[bus]['Timing 1']['SUN_FirstBus'],bus_info[bus]['Timing 1']['SUN_LastBus'])
+        dir2_info = 'Towards {}  \n'.format(bus_info[bus]['full route 2'][-1]) + 'Weekday First Bus : {}, Weekday Last Bus : {}'.format(bus_info[bus]['Timing 2']['WD_FirstBus'],bus_info[bus]['Timing 2']['WD_LastBus']) + ', Saturday First Bus : {}, Saturday Last Bus : {}'.format(bus_info[bus]['Timing 2']['SAT_FirstBus'],bus_info[bus]['Timing 2']['SAT_LastBus']) + ', Sunday First Bus : {}, Sunday Last Bus : {}'.format(bus_info[bus]['Timing 2']['SUN_FirstBus'],bus_info[bus]['Timing 2']['SUN_LastBus'])
+        first_last_bus_info = first_last_bus_info + '  \n' + dir1_info + '  \n' + dir2_info
+        full_route_1 = 'Towards {}  \nRoute List:'.format(bus_info[bus]['full route 1'][-1])
         for bs in bus_info[bus]['full route 1']:
-            full_route_1 = full_route_1 + '\n' + bs
-        full_route_2 = 'Towards {}\nRoute List:'.format(bus_info[bus]['full route 2'][-1])
+            full_route_1 = full_route_1 + '  \n' + bs
+        full_route_2 = 'Towards {}  \nRoute List:'.format(bus_info[bus]['full route 2'][-1])
         for bs in bus_info[bus]['full route 2']:
-            full_route_2 = full_route_2 + '\n' + bs
+            full_route_2 = full_route_2 + '  \n' + bs
         full_route_info = full_route_1 + '\n\n' + full_route_2
     else:
         direction_info = 'Direction of Travel: Bus Service {} is a loop service which starts at {}.'.format(bus, bus_info[bus]['full route 1'][-1])
-        first_last_bus_info = 'Bus Timing Information: The timings are as follows:\n Loop Service starting at {}\n'.format(bus_info[bus]['full route 1'][-1]) + 'Weekday First Bus : {}, Weekday Last Bus {}'.format(bus_info[bus]['Timing 1']['WD_FirstBus'],bus_info[bus]['Timing 1']['WD_LastBus']) + ',Saturday First Bus : {}, Saturday Last Bus : {}'.format(bus_info[bus]['Timing 1']['SAT_FirstBus'],bus_info[bus]['Timing 1']['SAT_LastBus']) + ',Sunday First Bus : {}, Sunday Last Bus : {}'.format(bus_info[bus]['Timing 1']['SUN_FirstBus'],bus_info[bus]['Timing 1']['SUN_LastBus'])
-        full_route_1 = 'Towards {}\nRoute List:'.format(bus_info[bus]['full route 1'][-1])
+        first_last_bus_info = 'Bus Timing Information: The timings are as follows:  \n Loop Service starting at {}  \n'.format(bus_info[bus]['full route 1'][-1]) + 'Weekday First Bus : {}, Weekday Last Bus {}'.format(bus_info[bus]['Timing 1']['WD_FirstBus'],bus_info[bus]['Timing 1']['WD_LastBus']) + ', Saturday First Bus : {}, Saturday Last Bus : {}'.format(bus_info[bus]['Timing 1']['SAT_FirstBus'],bus_info[bus]['Timing 1']['SAT_LastBus']) + ', Sunday First Bus : {}, Sunday Last Bus : {}'.format(bus_info[bus]['Timing 1']['SUN_FirstBus'],bus_info[bus]['Timing 1']['SUN_LastBus'])
+        full_route_1 = 'Towards {}  \nRoute List:'.format(bus_info[bus]['full route 1'][-1])
         for bs in bus_info[bus]['full route 1']:
-            full_route_1 = full_route_1 + '\n' + bs
+            full_route_1 = full_route_1 + '  \n' + bs
         full_route_info = full_route_1
     total = 'Bus Service {} Information'.format(bus) + '\n\n' + direction_info + '\n\n' + first_last_bus_info + '\n\n' + full_route_info
     bus_info_full['bus_service_info'].append(total)
@@ -167,7 +164,7 @@ def get_embedding(text: str) -> list:
         return embeddings[0].values
     except:
         return []
-    
+
 bus_info_df["bus_service_embedding"] = bus_info_df["bus_service"].apply(lambda x: get_embedding(x))
 
 embed_dict = {}
@@ -176,3 +173,4 @@ for index, row in bus_info_df.iterrows():
 
 with open('bus_service_embeddings.json', 'w') as json_file:
     json.dump(embed_dict, json_file)
+
