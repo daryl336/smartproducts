@@ -126,9 +126,9 @@ def bus_chatbot():
 
     st.caption(
         "A Chatbot with functionalities to get live bus timing from specified bus stop for a specified bus, and getting bus service information such as first and last bus timing, directions of travel and route list.\n\n"
-        "Some Sample below to help you out: \n\n"
+        "Some Sample below to help you out:  \n"
         
-        "1) Getting Live Bus Timing (Need to specify 1 Bus Stop Code and 1 Bus Service Number) - What is the arrival timing for bus 913 at 46009\n\n"
+        "1) Getting Live Bus Timing (Need to specify 1 Bus Stop Code and 1 Bus Service Number) - What is the arrival timing for bus 913 at 46009  \n"
 
         "2) Service Information (Need to specify Bus Service Number) - Get direction of travel for bus 22?"
     )
@@ -158,13 +158,19 @@ def bus_chatbot():
                     Prompt: What is the first and last bus for bus 72?
                     Answer: Service Information
 
-                    Prompt: What is the bus arrival timing for bus 80 at bus stop 54321?
-                    Answer: Arrival Timing
+                    Prompt: Route List bus 2.
+                    Answer: Service Information
 
                     Prompt: Get direction of travel for bus 22.
                     Answer: Service Information
+
+                    Prompt: What is the bus arrival timing for bus 80 at bus stop 54321?
+                    Answer: Arrival Timing
                     
                     Prompt: bus 913 arrival timing at 46001?
+                    Answer: Arrival Timing
+
+                    Prompt: when is bus 9 arriving at 34561?
                     Answer: Arrival Timing
 
                     Prompt: {question}."""
