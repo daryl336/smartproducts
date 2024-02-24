@@ -52,7 +52,7 @@ def convert_to_message(bus_stop_df, bus_stop_no, result):
     bus_stop_details = get_bus_stop_details(bus_stop_df, bus_stop_no)
     if bus_stop_details == "No such Bus Stop!":
         return "No such Bus Stop!"
-    header = "Bus Stop: {}, Bus Stop No: {} \n\n".format(bus_stop_details[0],str(bus_stop_no))
+    header = "Bus Stop: {}, Bus Stop No: {}  \n\n".format(bus_stop_details[0],str(bus_stop_no))
     full_msg = header
     for index in range(len(result)):
         bus = result[index]
@@ -60,13 +60,13 @@ def convert_to_message(bus_stop_df, bus_stop_no, result):
         arrival2 = str(bus['arrival'][1])
         arrival3 = str(bus['arrival'][2])
         if arrival1 == '99999' and arrival2 == '99999' and arrival3 == '99999':
-            bus_msg = "{}'s info not available now. \n"
+            bus_msg = "{}'s info not available now.  \n"
         elif arrival1 != '99999' and arrival2 == '99999' and arrival3 == '99999':
-            bus_msg = "{} is arriving in {} mins. \n".format(bus['service'], arrival1)
+            bus_msg = "{} is arriving in {} mins.  \n".format(bus['service'], arrival1)
         elif arrival1 != '99999' and arrival2 != '99999' and arrival3 == '99999':
-            bus_msg = "{} is arriving in {} mins and {} mins. \n".format(bus['service'], arrival1, arrival2)
+            bus_msg = "{} is arriving in {} mins and {} mins.  \n".format(bus['service'], arrival1, arrival2)
         elif arrival1 != '99999' and arrival2 != '99999' and arrival3 != '99999':
-            bus_msg = "{} is arriving in {} mins, {} mins and {} mins. \n".format(bus['service'], arrival1, arrival2, arrival3) 
+            bus_msg = "{} is arriving in {} mins, {} mins and {} mins.  \n".format(bus['service'], arrival1, arrival2, arrival3) 
         full_msg = full_msg + bus_msg
     return full_msg
 
@@ -152,6 +152,18 @@ def get_home(bus_stop_df, lta_api_key, location, radius=200):
 def get_go_to_work(bus_stop_df, lta_api_key, radius=200):
     full_msg = 'Bus to take to go work. \n\n'
     bus_stop_list = [46581,46011,46019]
+    for bus_stop in bus_stop_list:
+        bus_stop_result = get_all_bus_arrival_from_bus_stop(bus_stop, lta_api_key)
+        bus_stop_message = convert_to_message(bus_stop_df, bus_stop, bus_stop_result)
+        full_msg += bus_stop_message + "\n\n"
+    return full_msg
+
+def get_generic_nearest_bus_stop_details(bus_stop_df, lta_api_key, msg_header, location, radius=200):
+    lat = location[0]
+    long = location[1]
+    full_msg = msg_header + '  \n\n'
+    nearest_bus_stop_df = get_nearest_bus_stops(bus_stop_df, lat, long, radius)
+    bus_stop_list = list(nearest_bus_stop_df['BUS_STOP_N'])
     for bus_stop in bus_stop_list:
         bus_stop_result = get_all_bus_arrival_from_bus_stop(bus_stop, lta_api_key)
         bus_stop_message = convert_to_message(bus_stop_df, bus_stop, bus_stop_result)

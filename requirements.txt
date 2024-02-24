@@ -8,6 +8,7 @@ unstructured[all-docs]==0.11.8
 langchain-google-genai==0.0.5
 geopandas==0.14.3
 geopy==2.4.1
+streamlit_geolocation==0.0.10
 opencv-python-headless
 pysqlite3-binary
 

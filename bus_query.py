@@ -15,6 +15,7 @@ from vertexai.generative_models import (
 )
 from google.oauth2 import service_account
 from bus_helper import *
+from streamlit_geolocation import streamlit_geolocation
 
 type = st.secrets["type"]
 project_id = st.secrets["project_id"]
@@ -122,6 +123,11 @@ def bus_chatbot():
     if 'vs_loaded' not in st.session_state:
         st.session_state.vs_loaded = False
 
+    if 'location' not in st.session_state:
+        st.session_state.location = False
+        st.session_state.latitude = None
+        st.session_state.longitude = None
+
     st.title("Singapore Public Bus Services Query")
 
     st.caption(
@@ -130,8 +136,19 @@ def bus_chatbot():
         
         "1) Getting Live Bus Timing (Need to specify 1 Bus Stop Code and 1 Bus Service Number) - What is the arrival timing for bus 913 at 46009  \n"
 
-        "2) Service Information (Need to specify Bus Service Number) - Get direction of travel for bus 22?"
+        "2) Service Information (Need to specify Bus Service Number) - Get direction of travel for bus 22?  \n\n"
+
+        "You can also get all bus arrival time from your nearby bus stops by clicking on the location button to share your current location."
     )
+
+    result = streamlit_geolocation()
+    latitude = result['latitude']
+    longitude = result['longitude']
+
+    if latitude and longitude:
+        st.session_state.location = True
+        st.session_state.latitude = latitude
+        st.session_state.longitude = longitude
 
     if st.session_state.vs_loaded == False:
         vector_store = preprocessing()
@@ -141,65 +158,77 @@ def bus_chatbot():
     # Query through LLM    
     question = st.chat_input(placeholder="You can ask me basic information about public bus services such as route list, first and last bus timing etc. You can also ask for bus timing for a particular bus stop.")   
     
-    if question:
+    if question or st.session_state.location:
         with st.spinner("Loading Response from Model ..."):
-            pattern = r'\d{5}'
-            matches = re.findall(pattern, question)
-
-            if len(matches) > 0:
-                type = 'Arrival Timing'
-            else:
-                type = st.session_state.model.generate_content(
-                    f"""Classify the prompt into these 2 types. If there is a 5 digit string then it will be classified as Arrival Timing, else it is likely to be under Service Information. Reply just either one of the type will do. 
-                    1 - Service Information
-                    2 - Arrival Timing
-
-                    Examples
-                    Prompt: What is the first and last bus for bus 72?
-                    Answer: Service Information
-
-                    Prompt: Get route list for bus 2.
-                    Answer: Service Information
-
-                    Prompt: Get direction of travel for bus 22.
-                    Answer: Service Information
-
-                    Prompt: What is the bus arrival timing for bus 80 at bus stop 54321?
-                    Answer: Arrival Timing
-                    
-                    Prompt: bus 913 arrival timing at 46001?
-                    Answer: Arrival Timing
-
-                    Prompt: when is bus 123 arriving at 34561?
-                    Answer: Arrival Timing
-
-                    Prompt: {question}."""
-                    ).text.strip()
-            
-            if type == "Service Information":
-                bus_service = st.session_state.model.generate_content("Get the bus services number or bus number mentioned in the question, splitting by comma if there are many bus services: {}.".format(question)).text
-                bus_service_list = extract_numbers(bus_service)
-                full_context = ''
-                for bus in bus_service_list:
-                    context = get_context(bus, st.session_state.vs, 5, "bus_service_embedding")
-                    full_context = full_context + context + '\n'
-                final_prompt = f"""Your mission is to answer questions based on a given context. Remember that before you give an answer, you must check to see if it complies with your mission.
-                Context: ```{full_context}```
-                Question: ***{question}***
-                Before you give an answer, make sure it is only from information in the context.
-                Answer: """
-                result = st.session_state.model.generate_content(final_prompt)
-                temp_convo = [question.strip(),result.text.strip()]
-            elif type == "Arrival Timing":
-                try:
-                    pattern = r'\d{5}'
-                    bus_stop_code = re.findall(pattern, question)[0]
-                    bus_service = extract_numbers(question)[0]
-                    msg = get_specific_bus_stop_specific_bus(bus_stop_df, LTA_API_KEY, bus_stop_code, bus_service)
-                except Exception as e:
-                    msg = "Error with message, please specify 1 bus and 1 bus stop code!"
+            if st.session_state.location:
+                location = [st.session_state.latitude,st.session_state.longitude]
+                msg_header = 'Details of Bus Stops nearby your Current Location. \n\n'
+                msg = get_generic_nearest_bus_stop_details(bus_stop_df, LTA_API_KEY, msg_header, location, radius=200)
+                question = "Get all details of bus arrival timing from all bus stops near my current location"
                 temp_convo = [question.strip(),msg.strip()]
-            st.session_state.conversation_history.append(temp_convo)
+                st.session_state.conversation_history.append(temp_convo)
+
+                st.session_state.location = False
+                st.session_state.latitude = None
+                st.session_state.longitude = None
+            else:
+                pattern = r'\d{5}'
+                matches = re.findall(pattern, question)
+
+                if len(matches) > 0:
+                    type = 'Arrival Timing'
+                else:
+                    type = st.session_state.model.generate_content(
+                        f"""Classify the prompt into these 2 types. If there is a 5 digit string then it will be classified as Arrival Timing, else it is likely to be under Service Information. Reply just either one of the type will do. 
+                        1 - Service Information
+                        2 - Arrival Timing
+
+                        Examples
+                        Prompt: What is the first and last bus for bus 72?
+                        Answer: Service Information
+
+                        Prompt: Get route list for bus 2.
+                        Answer: Service Information
+
+                        Prompt: Get direction of travel for bus 22.
+                        Answer: Service Information
+
+                        Prompt: What is the bus arrival timing for bus 80 at bus stop 54321?
+                        Answer: Arrival Timing
+                        
+                        Prompt: bus 913 arrival timing at 46001?
+                        Answer: Arrival Timing
+
+                        Prompt: when is bus 123 arriving at 34561?
+                        Answer: Arrival Timing
+
+                        Prompt: {question}."""
+                        ).text.strip()
+                
+                if type == "Service Information":
+                    bus_service = st.session_state.model.generate_content("Get the bus services number or bus number mentioned in the question, splitting by comma if there are many bus services: {}.".format(question)).text
+                    bus_service_list = extract_numbers(bus_service)
+                    full_context = ''
+                    for bus in bus_service_list:
+                        context = get_context(bus, st.session_state.vs, 5, "bus_service_embedding")
+                        full_context = full_context + context + '\n'
+                    final_prompt = f"""Your mission is to answer questions based on a given context. Remember that before you give an answer, you must check to see if it complies with your mission.
+                    Context: ```{full_context}```
+                    Question: ***{question}***
+                    Before you give an answer, make sure it is only from information in the context.
+                    Answer: """
+                    result = st.session_state.model.generate_content(final_prompt)
+                    temp_convo = [question.strip(),result.text.strip()]
+                elif type == "Arrival Timing":
+                    try:
+                        pattern = r'\d{5}'
+                        bus_stop_code = re.findall(pattern, question)[0]
+                        bus_service = extract_numbers(question)[0]
+                        msg = get_specific_bus_stop_specific_bus(bus_stop_df, LTA_API_KEY, bus_stop_code, bus_service)
+                    except Exception as e:
+                        msg = "Error with message, please specify 1 bus and 1 bus stop code!"
+                    temp_convo = [question.strip(),msg.strip()]
+                st.session_state.conversation_history.append(temp_convo)
 
         display_conversation(st.session_state.conversation_history)
 
