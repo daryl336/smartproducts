@@ -167,5 +167,5 @@ def get_generic_nearest_bus_stop_details(bus_stop_df, lta_api_key, msg_header, l
     for bus_stop in bus_stop_list:
         bus_stop_result = get_all_bus_arrival_from_bus_stop(bus_stop, lta_api_key)
         bus_stop_message = convert_to_message(bus_stop_df, bus_stop, bus_stop_result)
-        full_msg += bus_stop_message + "\n\n"
+        full_msg += bus_stop_message + "  \n\n"
     return full_msg

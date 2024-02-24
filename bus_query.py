@@ -162,7 +162,7 @@ def bus_chatbot():
         with st.spinner("Loading Response from Model ..."):
             if st.session_state.location:
                 location = [st.session_state.latitude,st.session_state.longitude]
-                msg_header = 'Details of Bus Stops nearby your Current Location. \n\n'
+                msg_header = 'Details of Bus arrival timing from all Bus Stops near your Current Location. \n\n'
                 msg = get_generic_nearest_bus_stop_details(bus_stop_df, LTA_API_KEY, msg_header, location, radius=200)
                 question = "Get all details of bus arrival timing from all bus stops near my current location"
                 temp_convo = [question.strip(),msg.strip()]
