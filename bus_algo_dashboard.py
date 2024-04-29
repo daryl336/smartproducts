@@ -48,10 +48,13 @@ def load_data_from_camp(camp):
 
     if camp == "A Camp":
         spreadsheet_id = a_camp_complier_id
+        st.session_state.event_selected = "A Camp"
     elif camp == "B Camp":
         spreadsheet_id = b_camp_complier_id
+        st.session_state.event_selected = "B Camp"
     elif camp == "C Camp":
         spreadsheet_id = c_camp_complier_id
+        st.session_state.event_selected = "C Camp"
 
     if spreadsheet_id != '':
         ### Load Deshu Names 
@@ -129,6 +132,9 @@ def suggest_grouping():
     # deshu_group
     if 'deshu_group_edge' not in st.session_state:
         st.session_state.deshu_group_edge = []
+    # Camp or Bus or Room
+    if 'event_selected' not in st.session_state:
+        st.session_state.event_selected = None
     # Sample data
     deshu_list = ['1. 忠恕德 (忠德)','1A. 忠恕德 (恕德)','2. 明德','3. 宽德','4. 孝德','5. 仁德','6. 慈德','7. 信忍德 (信德)','7A. 信忍德 (忍德)','8. 公德','9. 博德 (义)','9A. 博德 (三)','10. 廉德','11. 爱德','12. 智德','13. 觉德','14. 节德','15. 俭德','16. 悌德','17. 正义德 (正德)','17A. 正义德 (义德)','18. 真德','19. 礼德','20. 敬德','21. 耻德','22. 温德','23. 良德','24. 和德','25. 峇淡','26. 廖内']
    
@@ -141,8 +147,9 @@ def suggest_grouping():
     st.write("")
 
     if camp_selected != '< Select >':
-        with st.spinner("Loading {} data ...".format(camp_selected)):
-            load_data_from_camp(camp_selected)
+        if camp_selected != st.session_state.event_selected:
+            with st.spinner("Loading {} data ...".format(camp_selected)):
+                load_data_from_camp(camp_selected)
             
     st.subheader('Select Deshu to be together in the same group [Optional]', divider='rainbow')
     # Create two dropdowns for selecting groups
