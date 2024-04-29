@@ -40,7 +40,6 @@ def load_credentials():
 
 def load_data_from_camp(camp):
     credentials_details = load_credentials()
-    st.write(credentials_details)
     service = shelper.authoriseServiceAccountForSheets(credentials_details)
     spreadsheet_id = ''
     a_camp_complier_id = "1xQjnMz1J1OdLdrEHRQsC35cXQ8MjHLULvRSMV4QcVWI"
@@ -124,12 +123,13 @@ def suggest_grouping():
             
     st.subheader('Select Deshu to be together in the same group [Optional]', divider='rainbow')
     # Create two dropdowns for selecting groups
-    selected_group_1 = st.selectbox('Select 1st Deshu:', deshu_list)
-    selected_group_2 = st.selectbox('Select 2nd Deshu:', deshu_list)
-
+    selected_group_1 = st.selectbox('Select 1st Deshu:', ['<Select>'] + deshu_list)
+    selected_group_2 = st.selectbox('Select 2nd Deshu:', ['<Select>'] + deshu_list)
+    st.write(['<Select>'] + deshu_list)
     # Button to insert selected items into the list
     if st.button('Add both deshus together'):
-        st.session_state.deshu_group_edge.append((selected_group_1,selected_group_2))
+        if selected_group_1 in deshu_list and selected_group_2 in deshu_list:
+            st.session_state.deshu_group_edge.append((selected_group_1,selected_group_2))
 
     st.write("")
     st.write("")
@@ -155,6 +155,11 @@ def suggest_grouping():
     bus_capacities = st.session_state.grouping_capacity
     bus_edges = st.session_state.deshu_group_edge
 
+    st.write(groups)
+    st.write(sizes)
+    st.write(bus_names)
+    st.write(bus_capacities)
+    st.write(bus_edges)
     if groups and sizes and bus_names and bus_capacities:
         allocations, assigned_groups, remaining_capacities, bus_names, groups = streamlit_main(groups, sizes, bus_names, bus_capacities, bus_edges)
         streamlit_write_results(allocations, assigned_groups, remaining_capacities, bus_names, groups)
