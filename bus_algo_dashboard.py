@@ -146,7 +146,7 @@ def suggest_grouping():
     st.subheader('Instructions!', divider='rainbow')    
     st.write("Deshu data is obtained from Compiler Spreadsheet, in the Summary sheet tab, column A (Deshu) and column C (参学者)")
     st.write("Group data is obtained from Compiler Spreadsheet, in the Groups sheet tab, column A (Group Name) and column B (Max Capacity)")
-    st.write("Eventual output will be in the Suggested Grouping sheet.")
+    st.write("Suggested groupings will be output and found in the Suggested Grouping sheet.")
     st.write("You may indicate any number of groups and set and capacity that you want.")
 
     st.write("")
