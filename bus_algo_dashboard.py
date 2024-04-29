@@ -80,8 +80,31 @@ def load_data_from_camp(camp):
 
         st.success('Data from {} successfully loaded!'.format(camp), icon="✅")
 
-def suggest_grouping():
+
+def update_suggested_grouping(camp,df):
     credentials_details = load_credentials()
+    service = shelper.authoriseServiceAccountForSheets(credentials_details)
+    spreadsheet_id = ''
+    a_camp_complier_id = "1xQjnMz1J1OdLdrEHRQsC35cXQ8MjHLULvRSMV4QcVWI"
+    b_camp_complier_id = "1ndR_GVWAPuZAo86jVhgfyRiFsn7CkdHT5FDcGTBG08E"
+    c_camp_complier_id = "18glM0s2Z0FGwShbsRedVnVddJH1Ax0psUbS_DopDpqs"
+
+    if camp == "A Camp":
+        spreadsheet_id = a_camp_complier_id
+    elif camp == "B Camp":
+        spreadsheet_id = b_camp_complier_id
+    elif camp == "C Camp":
+        spreadsheet_id = c_camp_complier_id
+
+    if spreadsheet_id != '':
+        sheet_name = 'Suggested Grouping'
+        range_cells = 'A1'
+        if shelper.updateRangeData(service,spreadsheet_id,sheet_name,range_cells,df):
+            st.success('Suggested Grouping Updated for {}! '.format(camp), icon="✅")
+        else:
+            st.error("Please check the data in the respective range!")
+
+def suggest_grouping():
     # deshu_count.csv
     if 'deshu_counts_file' not in st.session_state:
         st.session_state.deshu_counts_file = None
@@ -157,18 +180,13 @@ def suggest_grouping():
     bus_capacities = st.session_state.grouping_capacity
     bus_edges = st.session_state.deshu_group_edge
 
-    st.write(groups)
-    st.write(sizes)
-    st.write(bus_names)
-    st.write(bus_capacities)
-    st.write(bus_edges)
     if groups and sizes and bus_names and bus_capacities:
         allocations, assigned_groups, remaining_capacities, bus_names, groups = streamlit_main(groups, sizes, bus_names, bus_capacities, bus_edges)
-        streamlit_write_results(allocations, assigned_groups, remaining_capacities, bus_names, groups)
+        streamlit_write_results(allocations, assigned_groups, remaining_capacities, bus_names, groups, camp_selected)
     else:
         st.write("Please insert the corresponding files!")
 
-def streamlit_write_results(allocations, assigned_groups, remaining_capacities, bus_names, groups):
+def streamlit_write_results(allocations, assigned_groups, remaining_capacities, bus_names, groups, camp_selected):
     # Print the results
     deshu = []
     deshu_count = []
@@ -201,9 +219,7 @@ def streamlit_write_results(allocations, assigned_groups, remaining_capacities, 
         deshu_count.append(st.session_state.deshu_dictionary[j])
         group.append('Unassigned')
     final_result = pd.DataFrame({'Deshu' : deshu,'Deshu Count' : deshu_count, 'Assigned Group' : group})
-    if st.button('Download Suggested Classification Results'):
-        download_csv(final_result, 'Suggested Classification Results')
-    
+    update_suggested_grouping(camp_selected,final_result)
 
 if __name__ == "__main__":
     suggest_grouping()

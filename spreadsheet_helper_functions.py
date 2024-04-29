@@ -26,12 +26,25 @@ def appendRegistrationData(service,spreadsheet_id,sheet_name,range_cells,values)
             body={'values': values}).execute()
 
 def getRangeData(service,spreadsheet_id,sheet_name,range_cells):
-    ''' Check if the user is an existing user or new user.'''
     range_name = sheet_name+'!'+range_cells
     result = service.spreadsheets().values().get(spreadsheetId=spreadsheet_id, range=range_name).execute()
     values = result.get('values', [])
     single_list_of_values = sum(values, [])
     return single_list_of_values
+
+def updateRangeData(service,spreadsheet_id,sheet_name,range_cells,df):
+    range_name = sheet_name+'!'+range_cells
+    data = df.values.tolist()
+    body = {
+        'values': data
+    }
+    result = service.spreadsheets().values().update(
+        spreadsheetId=spreadsheet_id,
+        range=range_name,
+        valueInputOption='RAW',
+        body=body
+    ).execute()
+    return True
 
 def checkRegistration(service,spreadsheet_id,sheet_name,range_cells,user_id):
     ''' Check if the user is an existing user or new user.'''
