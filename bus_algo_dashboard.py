@@ -12,30 +12,31 @@ import base64
 import spreadsheet_helper_functions as shelper
 from google.oauth2 import service_account
 
-type = st.secrets["type"]
-project_id = st.secrets["project_id2"]
-private_key_id = st.secrets["private_key_id2"]
-private_key = st.secrets["private_key2"]
-client_email = st.secrets["client_email2"]
-client_id = st.secrets["client_id2"]
-auth_uri = st.secrets["auth_uri2"]
-token_uri  = st.secrets["token_uri2"]
-auth_provider_x509_cert_url  = st.secrets["auth_provider_x509_cert_url2"]
-client_x509_cert_url  = st.secrets["client_x509_cert_url2"]
+def load_credentials():
+    type = st.secrets["type"]
+    project_id = st.secrets["project_id2"]
+    private_key_id = st.secrets["private_key_id2"]
+    private_key = st.secrets["private_key2"]
+    client_email = st.secrets["client_email2"]
+    client_id = st.secrets["client_id2"]
+    auth_uri = st.secrets["auth_uri2"]
+    token_uri  = st.secrets["token_uri2"]
+    auth_provider_x509_cert_url  = st.secrets["auth_provider_x509_cert_url2"]
+    client_x509_cert_url  = st.secrets["client_x509_cert_url2"]
 
-credentials_details = {
-  "type": type,
-  "project_id": project_id,
-  "private_key_id": private_key_id,
-  "private_key": private_key,
-  "client_email": client_email,
-  "client_id": client_id,
-  "auth_uri": auth_uri,
-  "token_uri": token_uri,
-  "auth_provider_x509_cert_url": auth_provider_x509_cert_url,
-  "client_x509_cert_url": client_x509_cert_url,
-}
-st.write("Credentials Loaded")
+    credentials_details = {
+    "type": type,
+    "project_id": project_id,
+    "private_key_id": private_key_id,
+    "private_key": private_key,
+    "client_email": client_email,
+    "client_id": client_id,
+    "auth_uri": auth_uri,
+    "token_uri": token_uri,
+    "auth_provider_x509_cert_url": auth_provider_x509_cert_url,
+    "client_x509_cert_url": client_x509_cert_url,
+    }
+    return credentials_details
 
 def load_data_from_camp(credentials_details,camp):
     service = shelper.authoriseServiceAccountForSheets(credentials_details)
@@ -75,6 +76,7 @@ def load_data_from_camp(credentials_details,camp):
     st.session_state.grouping_capacity = deshu_counts
 
 def suggest_grouping():
+    credentials_details = load_credentials()
     # deshu_count.csv
     if 'deshu_counts_file' not in st.session_state:
         st.session_state.deshu_counts_file = None
