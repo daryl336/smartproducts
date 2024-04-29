@@ -118,10 +118,10 @@ def suggest_grouping():
     st.write("")
     st.write("")
 
-    with st.spinner("Loading {} data ...".format(camp_selected)):
-        load_data_from_camp(credentials_details,camp_selected)
-        
-
+    if camp_selected != '<Select>':
+        with st.spinner("Loading {} data ...".format(camp_selected)):
+            load_data_from_camp(camp_selected)
+            
     st.subheader('Select Deshu to be together in the same group [Optional]', divider='rainbow')
     # Create two dropdowns for selecting groups
     selected_group_1 = st.selectbox('Select 1st Deshu:', deshu_list)
