@@ -148,7 +148,7 @@ def suggest_grouping():
     st.write("Group data is obtained from Compiler Spreadsheet, in the Groups sheet tab, column A (Group Name) and column B (Max Capacity)")
     st.write("Eventual output will be in the Suggested Grouping sheet.")
     st.write("You may indicate any number of groups and set and capacity that you want.")
-    
+
     st.write("")
     st.write("")
 
@@ -218,7 +218,7 @@ def streamlit_write_results(allocations, assigned_groups, remaining_capacities, 
         if allocated_groups:
             name = bus_names[bus-1]
             count = 0
-            res = f"{name} -"
+            res = f"{name} - "
             for i in allocated_groups:
                 res = res + i[0] + '   '
                 count = count + i[1]
