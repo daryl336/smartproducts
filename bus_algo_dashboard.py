@@ -209,6 +209,9 @@ def suggest_grouping():
     else:
         st.write("Please insert the corresponding files!")
 
+    if st.button('Regenerate results'):
+        suggest_grouping()
+
 def streamlit_write_results(allocations, assigned_groups, remaining_capacities, bus_names, groups, camp_selected):
     # Print the results
     deshu = []
@@ -243,6 +246,7 @@ def streamlit_write_results(allocations, assigned_groups, remaining_capacities, 
         group.append('Unassigned')
     final_result = pd.DataFrame({'Deshu' : deshu,'Deshu Count' : deshu_count, 'Assigned Group' : group})
     update_suggested_grouping(camp_selected,final_result)
+
 
 if __name__ == "__main__":
     suggest_grouping()
