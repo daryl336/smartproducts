@@ -11,6 +11,7 @@ geopy==2.4.1
 streamlit_geolocation==0.0.10
 pandas==2.1.0
 networkx==3.2.1
+google-api-python-client == 2.127.0
 opencv-python-headless
 pysqlite3-binary
 
