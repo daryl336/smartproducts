@@ -81,6 +81,7 @@ def load_data_from_camp(camp):
         deshu_counts = shelper.getRangeData(service,spreadsheet_id,sheet_name,range_cells)
         st.session_state.grouping_capacity = deshu_counts
 
+        st.session_state.data_loaded = True
         st.success('Data from {} successfully loaded!'.format(camp), icon="✅")
 
 
@@ -135,10 +136,21 @@ def suggest_grouping():
     # Camp or Bus or Room
     if 'event_selected' not in st.session_state:
         st.session_state.event_selected = None
+    if 'data_loaded' not in st.session_state:
+        st.session_state.data_loaded = None
     # Sample data
     deshu_list = ['1. 忠恕德 (忠德)','1A. 忠恕德 (恕德)','2. 明德','3. 宽德','4. 孝德','5. 仁德','6. 慈德','7. 信忍德 (信德)','7A. 信忍德 (忍德)','8. 公德','9. 博德 (义)','9A. 博德 (三)','10. 廉德','11. 爱德','12. 智德','13. 觉德','14. 节德','15. 俭德','16. 悌德','17. 正义德 (正德)','17A. 正义德 (义德)','18. 真德','19. 礼德','20. 敬德','21. 耻德','22. 温德','23. 良德','24. 和德','25. 峇淡','26. 廖内']
    
     st.title("Suggested Grouping Classification")
+
+    st.subheader('Instructions!', divider='rainbow')    
+    st.write("Deshu data is obtained from Compiler Spreadsheet, in the Summary sheet tab, column A (Deshu) and column C (参学者)")
+    st.write("Group data is obtained from Compiler Spreadsheet, in the Groups sheet tab, column A (Group Name) and column B (Max Capacity)")
+    st.write("Eventual output will be in the Suggested Grouping sheet.")
+    st.write("You may indicate any number of groups and set and capacity that you want.")
+    
+    st.write("")
+    st.write("")
 
     st.subheader('Select Camp!', divider='rainbow')
     # Create two dropdowns for selecting groups
@@ -150,6 +162,9 @@ def suggest_grouping():
         if camp_selected != st.session_state.event_selected:
             with st.spinner("Loading {} data ...".format(camp_selected)):
                 load_data_from_camp(camp_selected)
+        else:
+            if st.session_state.data_loaded:
+                st.success('Data from {} successfully loaded!'.format(camp_selected), icon="✅")
             
     st.subheader('Select Deshu to be together in the same group [Optional]', divider='rainbow')
     # Create two dropdowns for selecting groups
@@ -159,7 +174,8 @@ def suggest_grouping():
     # Button to insert selected items into the list
     if st.button('Add both deshus together'):
         if selected_group_1 in deshu_list and selected_group_2 in deshu_list:
-            st.session_state.deshu_group_edge.append((selected_group_1,selected_group_2))
+            if (selected_group_1,selected_group_2) not in st.session_state.deshu_group_edge:
+                st.session_state.deshu_group_edge.append((selected_group_1,selected_group_2))
         else:
             st.error('Please select the deshus!', icon="🚨")
 
