@@ -14,6 +14,7 @@ from langchain.document_loaders import UnstructuredFileLoader, PyPDFLoader
 from unstructured.cleaners.core import clean_extra_whitespace
 import streamlit as st 
 from bus_query import *
+from bus_algo_dashboard import *
 
 GOOGLE_API_KEY = st.secrets["GOOGLE_API_KEY"]
 os.environ['GOOGLE_API_KEY']=GOOGLE_API_KEY
@@ -150,11 +151,13 @@ def doc_chatbot():
     
 def main():
     st.set_page_config(page_title="Smart AI Products Use Cases!", layout="wide")    
-    functions = ["Public Bus Services Query","Document Chatbot"]
+    functions = ["Suggest Groupings","Public Bus Services Query","Document Chatbot"]
     page = st.sidebar.selectbox("Choose a function", functions)
     if page == functions[0]:
-        bus_chatbot()
+        suggest_grouping()
     elif page == functions[1]:
+        bus_chatbot()
+    elif page == functions[2]:
         doc_chatbot()
 
 if __name__ == "__main__":
