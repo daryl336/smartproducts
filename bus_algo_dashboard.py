@@ -98,7 +98,7 @@ def update_suggested_grouping(camp,df):
 
     if spreadsheet_id != '':
         sheet_name = 'Suggested Grouping'
-        range_cells = 'A1'
+        range_cells = 'A2'
         if shelper.updateRangeData(service,spreadsheet_id,sheet_name,range_cells,df):
             st.success('Suggested Grouping Updated for {}! '.format(camp), icon="✅")
         else:
