@@ -74,7 +74,7 @@ def load_data_from_camp(camp):
         st.session_state.grouping_name = group_names
                 
         sheet_name = 'Groups'
-        range_cells = 'C2:C999'
+        range_cells = 'B2:B999'
         deshu_counts = shelper.getRangeData(service,spreadsheet_id,sheet_name,range_cells)
         st.session_state.grouping_capacity = deshu_counts
 
@@ -113,23 +113,25 @@ def suggest_grouping():
 
     st.subheader('Select Camp!', divider='rainbow')
     # Create two dropdowns for selecting groups
-    camp_selected = st.selectbox('Select Camp', ['<Select>','A Camp', 'B Camp', 'C Camp'],index=0)
+    camp_selected = st.selectbox('Select Camp', ['< Select >','A Camp', 'B Camp', 'C Camp'],index=0)
     st.write("")
     st.write("")
 
-    if camp_selected != '<Select>':
+    if camp_selected != '< Select >':
         with st.spinner("Loading {} data ...".format(camp_selected)):
             load_data_from_camp(camp_selected)
             
     st.subheader('Select Deshu to be together in the same group [Optional]', divider='rainbow')
     # Create two dropdowns for selecting groups
-    selected_group_1 = st.selectbox('Select 1st Deshu:', ['<Select>'] + deshu_list)
-    selected_group_2 = st.selectbox('Select 2nd Deshu:', ['<Select>'] + deshu_list)
-    st.write(['<Select>'] + deshu_list)
+    selected_group_1 = st.selectbox('Select 1st Deshu:', ['< Select >'] + deshu_list)
+    selected_group_2 = st.selectbox('Select 2nd Deshu:', ['< Select >'] + deshu_list)
+    
     # Button to insert selected items into the list
     if st.button('Add both deshus together'):
         if selected_group_1 in deshu_list and selected_group_2 in deshu_list:
             st.session_state.deshu_group_edge.append((selected_group_1,selected_group_2))
+        else:
+            st.error('Please select the deshus!', icon="🚨")
 
     st.write("")
     st.write("")
