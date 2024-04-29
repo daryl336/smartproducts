@@ -100,10 +100,12 @@ def suggest_grouping():
         st.session_state.deshu_group_edge = []
     # Sample data
     deshu_list = ['1. 忠恕德 (忠德)','1A. 忠恕德 (恕德)','2. 明德','3. 宽德','4. 孝德','5. 仁德','6. 慈德','7. 信忍德 (信德)','7A. 信忍德 (忍德)','8. 公德','9. 博德 (义)','9A. 博德 (三)','10. 廉德','11. 爱德','12. 智德','13. 觉德','14. 节德','15. 俭德','16. 悌德','17. 正义德 (正德)','17A. 正义德 (义德)','18. 真德','19. 礼德','20. 敬德','21. 耻德','22. 温德','23. 良德','24. 和德','25. 峇淡','26. 廖内']
-
-    st.set_page_config(page_title="Suggested Grouping Classification", layout="wide")    
+   
     st.title("Suggested Grouping Classification")
 
+    st.subheader('Select Camp!', divider='rainbow')
+    # Create two dropdowns for selecting groups
+    camp_selected = st.selectbox('Select Camp', ['A Camp', 'B Camp', 'C Camp'])
     st.write("")
     st.write("")
 
@@ -133,6 +135,9 @@ def suggest_grouping():
     st.write("")
 
     st.subheader('Classification Results', divider='rainbow')
+    with st.spinner("Loading {} data ...".format(camp_selected)):
+        load_data_from_camp(credentials_details,camp_selected)
+        st.write("Data Loaded!")
     groups = st.session_state.deshu_name
     sizes = st.session_state.deshu_size
     bus_names = st.session_state.grouping_name
