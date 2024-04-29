@@ -40,7 +40,7 @@ def load_credentials():
 
 def load_data_from_camp(credentials_details,camp):
     service = shelper.authoriseServiceAccountForSheets(credentials_details)
-
+    spreadsheet_id = ''
     a_camp_complier_id = "1xQjnMz1J1OdLdrEHRQsC35cXQ8MjHLULvRSMV4QcVWI"
     b_camp_complier_id = "1ndR_GVWAPuZAo86jVhgfyRiFsn7CkdHT5FDcGTBG08E"
     c_camp_complier_id = "18glM0s2Z0FGwShbsRedVnVddJH1Ax0psUbS_DopDpqs"
@@ -49,31 +49,33 @@ def load_data_from_camp(credentials_details,camp):
         spreadsheet_id = a_camp_complier_id
     elif camp == "B Camp":
         spreadsheet_id = b_camp_complier_id
-    else:
+    elif camp == "C Camp":
         spreadsheet_id = c_camp_complier_id
-    ### Load Deshu Names 
-    sheet_name = 'Summary'
-    range_cells = 'A2:A29'
-    deshu_names = shelper.getRangeData(service,spreadsheet_id,sheet_name,range_cells)
-    st.session_state.deshu_name = deshu_names
 
-    ### Load Deshu Counts
-    sheet_name = 'Summary'
-    range_cells = 'C2:C29'
-    deshu_counts = shelper.getRangeData(service,spreadsheet_id,sheet_name,range_cells)
-    st.session_state.deshu_size = deshu_counts 
-    st.session_state.deshu_dictionary = dict(zip(deshu_names,deshu_counts))
+    if spreadsheet_id != '':
+        ### Load Deshu Names 
+        sheet_name = 'Summary'
+        range_cells = 'A2:A29'
+        deshu_names = shelper.getRangeData(service,spreadsheet_id,sheet_name,range_cells)
+        st.session_state.deshu_name = deshu_names
 
-    ### Load Group Names and Max Capacity.
-    sheet_name = 'Groups'
-    range_cells = 'A2:A999'
-    group_names = shelper.getRangeData(service,spreadsheet_id,sheet_name,range_cells)
-    st.session_state.grouping_name = group_names
+        ### Load Deshu Counts
+        sheet_name = 'Summary'
+        range_cells = 'C2:C29'
+        deshu_counts = shelper.getRangeData(service,spreadsheet_id,sheet_name,range_cells)
+        st.session_state.deshu_size = deshu_counts 
+        st.session_state.deshu_dictionary = dict(zip(deshu_names,deshu_counts))
+
+        ### Load Group Names and Max Capacity.
+        sheet_name = 'Groups'
+        range_cells = 'A2:A999'
+        group_names = shelper.getRangeData(service,spreadsheet_id,sheet_name,range_cells)
+        st.session_state.grouping_name = group_names
                 
-    sheet_name = 'Groups'
-    range_cells = 'C2:C999'
-    deshu_counts = shelper.getRangeData(service,spreadsheet_id,sheet_name,range_cells)
-    st.session_state.grouping_capacity = deshu_counts
+        sheet_name = 'Groups'
+        range_cells = 'C2:C999'
+        deshu_counts = shelper.getRangeData(service,spreadsheet_id,sheet_name,range_cells)
+        st.session_state.grouping_capacity = deshu_counts
 
 def suggest_grouping():
     credentials_details = load_credentials()
@@ -108,9 +110,13 @@ def suggest_grouping():
 
     st.subheader('Select Camp!', divider='rainbow')
     # Create two dropdowns for selecting groups
-    camp_selected = st.selectbox('Select Camp', ['A Camp', 'B Camp', 'C Camp'])
+    camp_selected = st.selectbox('Select Camp', ['<Select>','A Camp', 'B Camp', 'C Camp'],index=0)
     st.write("")
     st.write("")
+
+    with st.spinner("Loading {} data ...".format(camp_selected)):
+        load_data_from_camp(credentials_details,camp_selected)
+        st.success('Data from {} successfully loaded!'.format(camp_selected), icon="✅")
 
     st.subheader('Select Deshu to be together in the same group [Optional]', divider='rainbow')
     # Create two dropdowns for selecting groups
@@ -138,9 +144,7 @@ def suggest_grouping():
     st.write("")
 
     st.subheader('Classification Results', divider='rainbow')
-    with st.spinner("Loading {} data ...".format(camp_selected)):
-        load_data_from_camp(credentials_details,camp_selected)
-        st.write("Data Loaded!")
+
     groups = st.session_state.deshu_name
     sizes = st.session_state.deshu_size
     bus_names = st.session_state.grouping_name
