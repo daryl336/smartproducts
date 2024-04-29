@@ -208,10 +208,10 @@ def suggest_grouping():
         if groups and sizes and bus_names and bus_capacities:
             allocations, assigned_groups, remaining_capacities, bus_names, groups = streamlit_main(groups, sizes, bus_names, bus_capacities, bus_edges)
             streamlit_write_results(allocations, assigned_groups, remaining_capacities, bus_names, groups, camp_selected)
-
-    if groups and sizes and bus_names and bus_capacities:
-        allocations, assigned_groups, remaining_capacities, bus_names, groups = streamlit_main(groups, sizes, bus_names, bus_capacities, bus_edges)
-        streamlit_write_results(allocations, assigned_groups, remaining_capacities, bus_names, groups, camp_selected)
+    else:
+        if groups and sizes and bus_names and bus_capacities:
+            allocations, assigned_groups, remaining_capacities, bus_names, groups = streamlit_main(groups, sizes, bus_names, bus_capacities, bus_edges)
+            streamlit_write_results(allocations, assigned_groups, remaining_capacities, bus_names, groups, camp_selected)
 
 def streamlit_write_results(allocations, assigned_groups, remaining_capacities, bus_names, groups, camp_selected):
     # Print the results
