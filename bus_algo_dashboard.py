@@ -38,7 +38,9 @@ def load_credentials():
     }
     return credentials_details
 
-def load_data_from_camp(credentials_details,camp):
+def load_data_from_camp(camp):
+    credentials_details = load_credentials()
+    st.write(credentials_details)
     service = shelper.authoriseServiceAccountForSheets(credentials_details)
     spreadsheet_id = ''
     a_camp_complier_id = "1xQjnMz1J1OdLdrEHRQsC35cXQ8MjHLULvRSMV4QcVWI"
@@ -76,6 +78,8 @@ def load_data_from_camp(credentials_details,camp):
         range_cells = 'C2:C999'
         deshu_counts = shelper.getRangeData(service,spreadsheet_id,sheet_name,range_cells)
         st.session_state.grouping_capacity = deshu_counts
+
+        st.success('Data from {} successfully loaded!'.format(camp), icon="✅")
 
 def suggest_grouping():
     credentials_details = load_credentials()
@@ -116,7 +120,7 @@ def suggest_grouping():
 
     with st.spinner("Loading {} data ...".format(camp_selected)):
         load_data_from_camp(credentials_details,camp_selected)
-        st.success('Data from {} successfully loaded!'.format(camp_selected), icon="✅")
+        
 
     st.subheader('Select Deshu to be together in the same group [Optional]', divider='rainbow')
     # Create two dropdowns for selecting groups
