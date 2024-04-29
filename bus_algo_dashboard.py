@@ -35,6 +35,7 @@ credentials_details = {
   "auth_provider_x509_cert_url": auth_provider_x509_cert_url,
   "client_x509_cert_url": client_x509_cert_url,
 }
+st.write("Credentials Loaded")
 
 def load_data_from_camp(credentials_details,camp):
     service = shelper.authoriseServiceAccountForSheets(credentials_details)
