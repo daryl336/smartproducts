@@ -59,13 +59,13 @@ def load_data_from_camp(camp):
     if spreadsheet_id != '':
         ### Load Deshu Names 
         sheet_name = 'Summary'
-        range_cells = 'A2:A29'
+        range_cells = 'A2:A31'
         deshu_names = shelper.getRangeData(service,spreadsheet_id,sheet_name,range_cells)
         st.session_state.deshu_name = deshu_names
 
         ### Load Deshu Counts
         sheet_name = 'Summary'
-        range_cells = 'C2:C29'
+        range_cells = 'C2:C31'
         deshu_counts = shelper.getRangeData(service,spreadsheet_id,sheet_name,range_cells)
         st.session_state.deshu_size = deshu_counts 
         st.session_state.deshu_dictionary = dict(zip(deshu_names,deshu_counts))
