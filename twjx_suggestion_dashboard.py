@@ -99,6 +99,20 @@ def twjx_update_suggested_grouping(event,df):
             st.error("Please check the data in the respective range!")
 
 def twjx_suggest_grouping():
+    # Camp or Bus or Room
+    if 'event_selected' not in st.session_state:
+        st.session_state.event_selected = None
+    if 'data_loaded' not in st.session_state:
+        st.session_state.data_loaded = None
+
+    if event_selected != '< Select >':
+        if event_selected != st.session_state.event_selected:
+            with st.spinner("Loading {} data ...".format(event_selected)):
+                load_data_from_twjx(event_selected)
+        else:
+            if st.session_state.data_loaded:
+                st.success('Data from {} successfully loaded!'.format(event_selected), icon="✅")
+    
     # deshu_count.csv
     if 'deshu_counts_file' not in st.session_state:
         st.session_state.deshu_counts_file = None
@@ -123,12 +137,7 @@ def twjx_suggest_grouping():
     # deshu_group
     if 'deshu_group_edge' not in st.session_state:
         st.session_state.deshu_group_edge = []
-    # Camp or Bus or Room
-    if 'event_selected' not in st.session_state:
-        st.session_state.event_selected = None
-    if 'data_loaded' not in st.session_state:
-        st.session_state.data_loaded = None
-
+        
     deshu_list = st.session_state.deshu_name
     if deshu_list:
         print(deshu_list)
@@ -151,13 +160,7 @@ def twjx_suggest_grouping():
     st.write("")
     st.write("")
 
-    if event_selected != '< Select >':
-        if event_selected != st.session_state.event_selected:
-            with st.spinner("Loading {} data ...".format(event_selected)):
-                load_data_from_twjx(event_selected)
-        else:
-            if st.session_state.data_loaded:
-                st.success('Data from {} successfully loaded!'.format(event_selected), icon="✅")
+    
             
     st.subheader('Select Deshu to be together in the same group [Optional]', divider='rainbow')
     # Create two dropdowns for selecting groups
