@@ -78,7 +78,7 @@ def load_data_from_twjx(event):
         st.success('Data for {} successfully loaded!'.format(event), icon="✅")
 
 
-def update_suggested_grouping(event,df):
+def twjx_update_suggested_grouping(event,df):
     credentials_details = load_credentials()
     service = shelper.authoriseServiceAccountForSheets(credentials_details)
     spreadsheet_id = ''
@@ -92,7 +92,6 @@ def update_suggested_grouping(event,df):
         sheet_name = 'Generate Room Arrangements'
 
     if spreadsheet_id != '':
-        sheet_name = 'Suggested Grouping'
         range_cells = 'A3'
         if shelper.updateRangeData(service,spreadsheet_id,sheet_name,range_cells,df):
             st.success('Suggested Grouping Updated for {}! '.format(event), icon="✅")
@@ -240,7 +239,7 @@ def streamlit_write_results(allocations, assigned_groups, remaining_capacities, 
         deshu_count.append(st.session_state.deshu_dictionary[j])
         group.append('Unassigned')
     final_result = pd.DataFrame({'Deshu' : deshu,'Deshu Count' : deshu_count, 'Assigned Group' : group})
-    update_suggested_grouping(camp_selected,final_result)
+    twjx_update_suggested_grouping(camp_selected,final_result)
 
 
 if __name__ == "__main__":
