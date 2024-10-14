@@ -129,11 +129,6 @@ def twjx_suggest_grouping():
     if 'data_loaded' not in st.session_state:
         st.session_state.data_loaded = None
                 
-    deshu_list = st.session_state.deshu_name
-    if deshu_list:
-        print(deshu_list)
-    else:
-        deshu_list = []
     st.title("Suggested Grouping Classification")
 
     st.subheader('Instructions!', divider='rainbow')    
@@ -158,7 +153,12 @@ def twjx_suggest_grouping():
         else:
             if st.session_state.data_loaded:
                 st.success('Data from {} successfully loaded!'.format(event_selected), icon="✅")
-            
+    
+    deshu_list = st.session_state.deshu_name
+    if deshu_list:
+        print(deshu_list)
+    else:
+        deshu_list = []
     st.subheader('Select Deshu to be together in the same group [Optional]', divider='rainbow')
     # Create two dropdowns for selecting groups
     selected_group_1 = st.selectbox('Select 1st Deshu:', ['< Select >'] + deshu_list)
