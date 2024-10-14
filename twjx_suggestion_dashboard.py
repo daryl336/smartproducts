@@ -99,7 +99,7 @@ def update_suggested_grouping(event,df):
         else:
             st.error("Please check the data in the respective range!")
 
-def suggest_grouping():
+def twjx_suggest_grouping():
     # deshu_count.csv
     if 'deshu_counts_file' not in st.session_state:
         st.session_state.deshu_counts_file = None
@@ -131,13 +131,17 @@ def suggest_grouping():
         st.session_state.data_loaded = None
 
     deshu_list = st.session_state.deshu_name
+    if deshu_list:
+        print(deshu_list)
+    else:
+        deshu_list = []
     st.title("Suggested Grouping Classification")
 
     st.subheader('Instructions!', divider='rainbow')    
-    st.write("Deshu data is obtained from Compiler Spreadsheet, in the Summary sheet tab, column A (Deshu) and column C (参学者)")
-    st.write("Group data is obtained from Compiler Spreadsheet, in the Groups sheet tab, column A (Group Name) and column B (Max Capacity)")
-    st.write("Suggested groupings will be output and found in the Suggested Grouping sheet.")
-    st.write("You may indicate any number of groups and set and capacity that you want.")
+    st.write("Deshu and Grouping (Bus / Room data) is obtained from TWJX Admin Spreadsheet in the Generate Bus Arrangements / Generate Room Arrangements sheet.")
+    st.write("TWJX Admin Spreadsheet: https://docs.google.com/spreadsheets/d/1IYSmKJVgD4DZ3BFfd0Ij3R4w4LzK3S_JY4M9NubL3VA/edit?gid=1645101658#gid=1645101658")
+    st.write("Suggested groupings will be output and found in the same sheet")
+    st.write("You can further split the deshu into smaller groups and set the capacity as and when appropriate.")
 
     st.write("")
     st.write("")
@@ -240,4 +244,4 @@ def streamlit_write_results(allocations, assigned_groups, remaining_capacities, 
 
 
 if __name__ == "__main__":
-    suggest_grouping()
+    twjx_suggest_grouping()
