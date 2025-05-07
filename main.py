@@ -152,12 +152,12 @@ def doc_chatbot():
     
 def main():
     st.set_page_config(page_title="Smart AI Products Use Cases!", layout="wide")    
-    functions = ["TWJX Bus and Room Arrangement Suggestions","Suggest Groupings","Public Bus Services Query","Document Chatbot"]
+    functions = ["Camp Groupings Suggestions","TWJX Bus and Room Arrangement Suggestions","Public Bus Services Query","Document Chatbot"]
     page = st.sidebar.selectbox("Choose a function", functions)
     if page == functions[0]:
-        twjx_suggest_grouping()
-    elif page == functions[1]:
         suggest_grouping()
+    elif page == functions[1]:
+        twjx_suggest_grouping()
     elif page == functions[2]:
         bus_chatbot()
     elif page == functions[3]:
